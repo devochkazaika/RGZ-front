@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
 
 export default class Home extends Component {
 
@@ -20,8 +17,12 @@ export default class Home extends Component {
       image : {},
       token : {
         mather: "0",
-        fast_Memory: "0"
-      }
+        fast_Memory: "0",
+        video: "0",
+        price_1: 0,
+        price_2: 999999999
+      },
+      isGoing : true
     };
   }
   componentDidMount = () => {
@@ -55,23 +56,62 @@ export default class Home extends Component {
 //   };
 
   handleInputMath = e => {
-    this.state.token.mather = e.target.value;
-    this.forceUpdate();
-    axios.post("/get_pc", this.state.token).then(response => {
-        this.setState({
-          data: response.data
+    const newToken = {fast_Memory: this.state.token.fast_Memory, mather: e.target.value, video: this.state.token.video,
+                    price_1: this.state.token.price_1,
+                    price_2: this.state.token.price_2
+  };
+    this.setState({ token: newToken }, () => {
+        axios.post("/get_pc", this.state.token).then(response => {
+            this.setState({ data: response.data });
         });
     });
   };
 
   handleInputMemory = e => {
-    this.state.token.memory = e.target.value;
-    axios.post("/get_pc", this.state.token).then(response => {
-        this.setState({
-          data: response.data
+    const newToken = {mather: this.state.token.mather, fast_Memory: e.target.value, video: this.state.token.video,
+                    price_1: this.state.token.price_1,
+                    price_2: this.state.token.price_2
+  };
+    this.setState({ token: newToken }, () => {
+        axios.post("/get_pc", this.state.token).then(response => {
+            this.setState({ data: response.data });
         });
     });
+};
+
+handleInputGraphics = e => {
+  const newToken = {mather: this.state.token.mather, fast_Memory: this.state.token.fast_Memory, video: e.target.value,
+                    price_1: this.state.token.price_1,
+                    price_2: this.state.token.price_2
   };
+  this.setState({ token: newToken }, () => {
+      axios.post("/get_pc", this.state.token).then(response => {
+          this.setState({ data: response.data });
+      });
+  });
+  };
+
+  handleInputPrice_1 = e => {
+  const newToken = {mather: this.state.token.mather, fast_Memory: this.state.token.fast_Memory, video: this.state.token.video,
+                    price_1: e.target.value,
+                    price_2: this.state.token.price_2};
+  this.setState({ token: newToken }, () => {
+      axios.post("/get_pc", this.state.token).then(response => {
+          this.setState({ data: response.data });
+      });
+  });
+  };
+
+  handleInputPrice_2 = e => {
+    const newToken = {mather: this.state.token.mather, fast_Memory: this.state.token.fast_Memory, video: this.state.token.video,
+      price_1: this.state.token.price_1,
+      price_2: e.target.value};
+    this.setState({ token: newToken }, () => {
+        axios.post("/get_pc", this.state.token).then(response => {
+            this.setState({ data: response.data });
+        });
+    });
+    };
 
 //   handleImage = e => {
 //     alert(e.target.value)
@@ -111,19 +151,31 @@ export default class Home extends Component {
           <thead>
             <tr>
                 <th style={{width: "90px"}}>
-                    <Form.Control onChange={this.handleInputMath} style={{width: "100%"}} type="text" />
+                    <Form.Control style={{width: "100%"}} type="text" />
                 </th>
                 <th style={{width: "90px"}}>
-                    <Form.Control onChange={this.handleInputMath} style={{width: "100%"}} type="text" />
+                    <Form.Control name="a" onChange={this.handleInputMath} style={{width: "100%"}} type="text" />
                 </th>
-                <th style={{width: "90px"}}>
-                    <Form.Control onChange={this.handleInputMemory} style={{width: "100%"}} type="text" />
+
+                <th  style={{width: "90px"}}>
+                    <Form.Control name="s" onChange={this.handleInputMemory} style={{width: "100%"}} type="text" />
+                </th>
+
+                <th  style={{width: "90px"}}>
+                    <Form.Control name="s" onChange={this.handleInputGraphics} style={{width: "100%"}} type="text" />
+                </th>
+
+                <th  style={{width: "90px"}}>
+                    <Form.Control name="s" onChange={this.handleInputPrice_1} style={{width: "100%"}} type="text" />
+                    <Form.Control name="s" onChange={this.handleInputPrice_2} style={{width: "100%"}} type="text" />
                 </th>
             </tr>
             <tr>
             <th>id</th>
             <th>name math</th>
             <th>name fast_memory</th>
+            <th>name video</th>
+            <th>price</th>
           </tr>
           </thead>
           <tbody>
@@ -132,6 +184,8 @@ export default class Home extends Component {
               <td key={item.id}>{item.id}</td>
               <td key={item.id}>{item.mather}</td>
               <td key={item.id}>{item.fast_Memory}</td>
+              <td key={item.id}>{item.video}</td>
+              <td key={item.id}>{item.price}</td>
             </tr>
           )
           )}

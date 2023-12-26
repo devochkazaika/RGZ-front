@@ -3,8 +3,6 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
 
 export default class Pcs extends Component {
 
@@ -16,8 +14,9 @@ export default class Pcs extends Component {
       memories : [],
       math : 0,
       memory : 0,
-      id : null,
       image : {},
+      video : 0, 
+      videos : [],
     };
   }
   componentDidMount = () => {
@@ -36,51 +35,53 @@ export default class Pcs extends Component {
         memories: response.data
       });
     });
+    axios.get("/all/video").then(response => {
+      this.setState({
+        videos: response.data
+      });
+    });
   };
 
   handleInputMath = e => {
     axios.get("/get/math/na/" +e.target.value)
     .then(response =>{
       this.setState({
-        math: response.data[0].id
-      }
-      );
-      
-    })
+        math: response.data
+      });}
+    )
+    // this.forceUpdate();
   };
 
   handleInputMemory = e => {
     axios.get("/get/memory/na/" +e.target.value)
     .then(response =>{
-
       this.setState({
-        memory: response.data[0].id
+        memory: response.data
       });
     })
   };
 
-  handleImage = e => {
-    alert(e.target.value)
-    let image_as_base64 = URL.createObjectURL(e.target.files[0])
-        let image_as_files = e.target.files[0];
-
-        this.setState({
-            image_preview: image_as_base64,
-            image_file: image_as_files,
-        })
+  handleInputVideo = e => {
+    axios.get("/get/video/na/" +e.target.value)
+    .then(response =>{
+      this.setState({
+        video: response.data
+      });
+    })
   };
 
-  handleSubmit = async () => {
-    const pc = {id_math: this.state.math, id_fast_memory: this.state.memory}
-    const im = {id_math: this.state.math, id_fast_memory: this.state.memory}
-    alert(this.state.math)
-    console.log(pc)
-    try {
-      const response = await axios.post('/add/pc', {id_math: this.state.math, id_fast_memory: this.state.memory});
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+  handleSubmit = () => {
+    const pc = {id_math: this.state.math, id_fast_memory: this.state.memory, id_graphics: this.state.video};
+    axios.post('/add/pc', pc).then((response) => {
+      console.log(response.status, response.data.token);
+    });
+    alert("успех");
+    // this.forceUpdate();
+    // this.forceUpdate();
+      // Handle success, update state, or notify the user
+    // } catch (error) {
+    //   // Handle error, show an error message to the user
+    // }
   };
 
   render(){
@@ -98,14 +99,16 @@ export default class Pcs extends Component {
             <th>id</th>
             <th>id_math</th>
             <th>id_fast_memory</th>
+            <th>id_graphics</th>
           </tr>
           </thead>
           <tbody>
           {this.state.data.map(item => (
-            <tr>
-              <td key={item.id}>{item.id}</td>
-              <td key={item.id}>{item.id_math}</td>
-              <td key={item.id}>{item.id_fast_memory}</td>
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.id_math}</td>
+              <td>{item.id_fast_memory}</td>
+              <td>{item.id_graphics}</td>
             </tr>
           )
           )}
@@ -128,7 +131,7 @@ export default class Pcs extends Component {
         {/* оперативка */}
         <Form.Group className="mb-3">
         <Form.Text className="text-muted">
-          Matherboard
+          Memory
         </Form.Text>
         <Form.Select onChange={this.handleInputMemory} name="memory">
           {this.state.memories.map(item => (
@@ -137,8 +140,16 @@ export default class Pcs extends Component {
           )}
         </Form.Select>
         </Form.Group>
-        <Form.Group onChange={this.handleImage} name="image">
-          <Form.Control type="file" label="select photo"/>
+        <Form.Group>
+        <Form.Text className="text-muted">
+          Videocard
+        </Form.Text>
+        <Form.Select onChange={this.handleInputVideo} name="video">
+          {this.state.videos.map(item => (
+            <option key={item.id}>{item.name}</option>
+          )
+          )}
+        </Form.Select>
         </Form.Group>
 
         <Button variant="primary" type="submit">

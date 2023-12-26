@@ -1,9 +1,7 @@
 import React from 'react';
-import {Link} from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 
 class Nava extends React.Component{
   render(){
@@ -19,7 +17,13 @@ class Nava extends React.Component{
               <Nav.Link href="./pcs">PCs</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href="./pcs">Maths</Nav.Link>
+              <Nav.Link href="./mather">Maths</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="./video">Graphics</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="./memory">Memory</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link href="./home">Home</Nav.Link>
